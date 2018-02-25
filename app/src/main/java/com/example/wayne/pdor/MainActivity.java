@@ -18,11 +18,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Toolbar (the upper view of activity_main)
+        final Intent intent = new Intent();
+
+        //Toolbar (the upper view of activity_main)-----------------------------------Upper
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //FloatingActionButton (the bottom view of activity_main)
+        //FloatingActionButton (the bottom view of activity_main)---------------------Bottom
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -32,13 +34,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //Fragment view
+        //Fragment view---------------------------------------------------------------Middle
         Button read_btn = (Button) findViewById(R.id.Read_btn);
+        Button ballon_btn = (Button) findViewById(R.id.Ballon_btn);
+        Button gift_btn = (Button) findViewById(R.id.Gift_btn);
+
         read_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
                 intent.setClass(MainActivity.this, Knowledge.class);
+                startActivity(intent);
+            }
+        });
+        ballon_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent.setClass(MainActivity.this, Ballon.class);
+                startActivity(intent);
+            }
+        });
+        gift_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent.setClass(MainActivity.this, Collection.class);
                 startActivity(intent);
             }
         });
