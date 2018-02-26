@@ -13,11 +13,17 @@ import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.webkit.WebViewFragment;
 import android.widget.TextView;
 
 public class Knowledge extends AppCompatActivity {
 
     String _url = "https://www.google.com.tw";
+    static String url_db[] = { "https://www.google.com.tw",
+                        "https://pnn.tw/",
+                        "https://gnn.gamer.com.tw/2/159522.html",
+                        "https://www.bnext.com.tw/",
+                        "https://buzzorange.com/techorange/"};
     final int Fragment_num = 5;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +67,15 @@ public class Knowledge extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.screen_slide_page, container, false);
-            TextView tv = rootView.findViewById(R.id.screen_slide_tv1);
+
+            TextView tv = rootView.findViewById(R.id.screen_fragment_tv1);
+            WebView web_view = (WebView) rootView.findViewById(R.id.screen_fragment_webview1);
+            web_view.getSettings().setJavaScriptEnabled(true);
+            web_view.getSettings().setDisplayZoomControls(true);
+            web_view.setWebViewClient(new WebViewClient()); //Force links & open website in current view
+
             tv.setText("Hi" + this.position);
+            web_view.loadUrl(url_db[this.position]);
 
             return rootView;
         }
