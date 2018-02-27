@@ -14,31 +14,43 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.webkit.WebViewFragment;
+import android.widget.Button;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 public class Knowledge extends AppCompatActivity {
 
-    String _url = "https://www.google.com.tw";
     static String url_db[] = { "https://www.google.com.tw",
                         "https://pnn.tw/",
                         "https://gnn.gamer.com.tw/2/159522.html",
                         "https://www.bnext.com.tw/",
                         "https://buzzorange.com/techorange/"};
-    final int Fragment_num = 5;
+
+    static  ArrayList fragement_list = new ArrayList();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_knowledge);
 
+        //
         ViewPager view_pager = (ViewPager) findViewById(R.id.viewPager);
-        PagerAdapter pager_adpt = new ScreenSlidePagerAdapter(getSupportFragmentManager());
+        final PagerAdapter pager_adpt = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         view_pager.setAdapter(pager_adpt);
 
-        //setting
-//        WebView web_view = (WebView)findViewById(R.id.webView1);
-//        WebSettings web_view_setting = web_view.getSettings();
-//        web_view_setting.setJavaScriptEnabled(true);
-//        web_view.loadUrl(_url);
+        //
+        Button add_btn = (Button)findViewById(R.id.add_button);
+        add_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (fragement_list.size() < url_db.length)
+                {
+                    fragement_list.add(url_db[fragement_list.size()]);
+                    pager_adpt.notifyDataSetChanged(); //refresh the fragment
+                }
+            }
+        });
     }
 
     private class ScreenSlidePagerAdapter extends FragmentPagerAdapter {
@@ -55,7 +67,7 @@ public class Knowledge extends AppCompatActivity {
         }
         @Override
         public int getCount() {
-            return Fragment_num;
+            return fragement_list.size();
         }
     }
 
@@ -75,7 +87,8 @@ public class Knowledge extends AppCompatActivity {
             web_view.setWebViewClient(new WebViewClient()); //Force links & open website in current view
 
             tv.setText("Hi" + this.position);
-            web_view.loadUrl(url_db[this.position]);
+            String _url = fragement_list.get(this.position).toString();
+            web_view.loadUrl(_url);
 
             return rootView;
         }
