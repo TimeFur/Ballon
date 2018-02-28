@@ -6,6 +6,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,16 +14,20 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
+    final String TAG = "Main Activity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         final Intent intent = new Intent();
+        Log.d(TAG,"Main  Start");
 
         //Toolbar (the upper view of activity_main)-----------------------------------Upper
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        Log.d(TAG,"Upper  Start");
 
         //FloatingActionButton (the bottom view of activity_main)---------------------Bottom
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -33,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+        Log.d(TAG,"Bottom  Start");
 
         //Fragment view---------------------------------------------------------------Middle
         Button read_btn = (Button) findViewById(R.id.Read_btn);
@@ -60,6 +66,12 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        Log.d(TAG,"Middle  Start");
+
+        //Service Setting-------------------------------------------------------------Background thread
+        Intent startservice = new Intent(this, Retrive_info.class);
+        startService(startservice);
+        Log.d(TAG,"Service  Start");
     }
 
     @Override

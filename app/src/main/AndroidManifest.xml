@@ -21,6 +21,8 @@
         <activity android:name=".Knowledge"/>
         <activity android:name=".Ballon" />
         <activity android:name=".Collection"></activity>
+
+        <service android:name="com.example.wayne.pdor.Retrive_info" />
     </application>
 
 </manifest>
