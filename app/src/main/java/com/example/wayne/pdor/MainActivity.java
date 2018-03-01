@@ -1,5 +1,9 @@
 package com.example.wayne.pdor;
 
+import android.app.ActivityManager;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;

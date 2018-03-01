@@ -1,11 +1,17 @@
 package com.example.wayne.pdor;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Service;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
+
+import java.util.List;
 
 /**
  * Created by Wayne on 2018/2/28.
@@ -24,6 +30,17 @@ public class Retrive_info extends Service {
 
         handle = new Handler();
         handle.post(this.serviceRunnable);
+
+        final ClipboardManager cm = (ClipboardManager)getApplication().getSystemService(Context.CLIPBOARD_SERVICE);
+        cm.addPrimaryClipChangedListener(new ClipboardManager.OnPrimaryClipChangedListener() {
+            @Override
+            public void onPrimaryClipChanged() {
+                ClipData data = cm.getPrimaryClip();
+                ClipData.Item item = data.getItemAt(0);
+                String v = item.getText().toString();
+                Log.w(TAG,v);
+            }
+        });
     }
 
     @Override
@@ -44,9 +61,10 @@ public class Retrive_info extends Service {
     }
 
     Runnable serviceRunnable = new Runnable() {
+
         @Override
         public void run() {
-            Log.d(TAG, "Post");
+            Log.i(TAG, "Post");
             handle.postDelayed(this, 1000);
         }
     };
