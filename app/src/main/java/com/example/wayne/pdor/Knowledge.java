@@ -7,6 +7,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ public class Knowledge extends AppCompatActivity {
                         "https://buzzorange.com/techorange/"};
 
     static  ArrayList fragement_list = new ArrayList();
+    String TAG = "KNOWLEDGE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +53,7 @@ public class Knowledge extends AppCompatActivity {
                 }
             }
         });
+
     }
 
     private class ScreenSlidePagerAdapter extends FragmentPagerAdapter {
@@ -92,5 +95,9 @@ public class Knowledge extends AppCompatActivity {
 
             return rootView;
         }
+    }
+
+    public void updateServiceRetriveMsg(String _url){
+        Log.w(TAG, _url);
     }
 }

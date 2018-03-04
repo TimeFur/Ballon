@@ -1,11 +1,11 @@
 package com.example.wayne.pdor;
 
-import android.app.ActivityManager;
-import android.content.ClipData;
-import android.content.ClipboardManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +19,7 @@ import android.widget.Button;
 public class MainActivity extends AppCompatActivity {
 
     final String TAG = "Main Activity";
+    Retrive_info Retrive_service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,8 +75,26 @@ public class MainActivity extends AppCompatActivity {
 
         //Service Setting-------------------------------------------------------------Background thread
         Intent startservice = new Intent(this, Retrive_info.class);
-        startService(startservice);
+        //startService(startservice);
+        bindService(startservice, mService, Context.BIND_AUTO_CREATE);
+        Retrive_service.register_cb_function(this);
         Log.d(TAG,"Service  Start");
+    }
+    public ServiceConnection mService = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Retrive_info.localBinder binder = (Retrive_info.localBinder)service;
+            Retrive_service = binder.getBinder();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Retrive_service = null;
+        }
+    };
+    public void updateServiceRetriveMsg(String _url){
+        Log.w(TAG, _url);
     }
 
     @Override

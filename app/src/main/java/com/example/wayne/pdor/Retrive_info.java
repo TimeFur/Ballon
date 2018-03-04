@@ -7,6 +7,8 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
@@ -22,7 +24,7 @@ public class Retrive_info extends Service {
     final String TAG = "Retrive_info";
     Callback main_activity;
     Handler handle;
-
+    final localBinder mBinder = new localBinder();
     @Override
     public void onCreate() {
         super.onCreate();
@@ -38,6 +40,7 @@ public class Retrive_info extends Service {
                 ClipData data = cm.getPrimaryClip();
                 ClipData.Item item = data.getItemAt(0);
                 String v = item.getText().toString();
+                main_activity.updateServiceRetriveMsg(v);
                 Log.w(TAG,v);
             }
         });
@@ -57,9 +60,15 @@ public class Retrive_info extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return mBinder;
+    }
+    public class localBinder extends Binder {
+        Retrive_info getBinder(){
+            return Retrive_info.this;
+        }
     }
 
+    //
     Runnable serviceRunnable = new Runnable() {
 
         @Override
@@ -68,12 +77,13 @@ public class Retrive_info extends Service {
             handle.postDelayed(this, 1000);
         }
     };
+
     //Register the callback function
     public void register_cb_function(Activity main_activity){
         this.main_activity = (Callback) main_activity;
     }
 
     public interface Callback{
-        public void updateServiceRetriveMsg(String _url);
+        public void updateServiceRetriveMsg(String v);
     }
 }
