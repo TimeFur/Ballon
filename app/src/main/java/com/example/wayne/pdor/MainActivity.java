@@ -16,7 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Retrive_info.Callback{
 
     final String TAG = "Main Activity";
     Retrive_info Retrive_service;
@@ -77,15 +77,16 @@ public class MainActivity extends AppCompatActivity {
         Intent startservice = new Intent(this, Retrive_info.class);
         //startService(startservice);
         bindService(startservice, mService, Context.BIND_AUTO_CREATE);
-        Retrive_service.register_cb_function(this);
         Log.d(TAG,"Service  Start");
     }
+
     public ServiceConnection mService = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Retrive_info.localBinder binder = (Retrive_info.localBinder)service;
             Retrive_service = binder.getBinder();
+            Retrive_service.register_cb_function(MainActivity.this); // callback function register
         }
 
         @Override
@@ -93,8 +94,11 @@ public class MainActivity extends AppCompatActivity {
             Retrive_service = null;
         }
     };
+
+    //Callback function implement for Service
     public void updateServiceRetriveMsg(String _url){
         Log.w(TAG, _url);
+        Log.w(TAG, "Get Service callback");
     }
 
     @Override

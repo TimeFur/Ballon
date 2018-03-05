@@ -1,6 +1,11 @@
 package com.example.wayne.pdor;
 
 import android.app.Fragment;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
@@ -20,7 +25,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class Knowledge extends AppCompatActivity {
+public class Knowledge extends AppCompatActivity implements Retrive_info.Callback{
 
     static String url_db[] = { "https://www.google.com.tw",
                         "https://pnn.tw/",
@@ -29,7 +34,10 @@ public class Knowledge extends AppCompatActivity {
                         "https://buzzorange.com/techorange/"};
 
     static  ArrayList fragement_list = new ArrayList();
+    Retrive_info retrive_info;
+    PagerAdapter pager_adpt;
     String TAG = "KNOWLEDGE";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +46,7 @@ public class Knowledge extends AppCompatActivity {
 
         //
         ViewPager view_pager = (ViewPager) findViewById(R.id.viewPager);
-        final PagerAdapter pager_adpt = new ScreenSlidePagerAdapter(getSupportFragmentManager());
+        pager_adpt = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         view_pager.setAdapter(pager_adpt);
 
         //
@@ -46,14 +54,39 @@ public class Knowledge extends AppCompatActivity {
         add_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (fragement_list.size() < url_db.length)
-                {
-                    fragement_list.add(url_db[fragement_list.size()]);
-                    pager_adpt.notifyDataSetChanged(); //refresh the fragment
-                }
+//                if (fragement_list.size() < url_db.length)
+//                {
+//                    fragement_list.add(url_db[fragement_list.size()]);
+//                    pager_adpt.notifyDataSetChanged(); //refresh the fragment
+//                }
             }
         });
 
+        //
+        Intent service_intent = new Intent();
+        service_intent.setClass(this, Retrive_info.class);
+        bindService(service_intent, mService, Context.BIND_AUTO_CREATE);
+    }
+
+    public ServiceConnection mService = new ServiceConnection(){
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Retrive_info.localBinder service_binder = (Retrive_info.localBinder) service;
+            retrive_info = service_binder.getBinder(); //get the instance
+            retrive_info.register_cb_function(Knowledge.this); //register callback
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
+
+    @Override
+    public void updateServiceRetriveMsg(String v) {
+        fragement_list.add(v);
+        pager_adpt.notifyDataSetChanged(); //refresh the fragment
     }
 
     private class ScreenSlidePagerAdapter extends FragmentPagerAdapter {
@@ -95,9 +128,5 @@ public class Knowledge extends AppCompatActivity {
 
             return rootView;
         }
-    }
-
-    public void updateServiceRetriveMsg(String _url){
-        Log.w(TAG, _url);
     }
 }

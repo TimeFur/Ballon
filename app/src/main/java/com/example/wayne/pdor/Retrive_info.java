@@ -25,6 +25,7 @@ public class Retrive_info extends Service {
     Callback main_activity;
     Handler handle;
     final localBinder mBinder = new localBinder();
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -48,14 +49,14 @@ public class Retrive_info extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "Already create Retrive_info Service");
+        Log.w(TAG, "Already create Retrive_info Service");
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "Destory Retrive_info Service");
+        Log.w(TAG, "Destory Retrive_info Service");
     }
 
     @Override
