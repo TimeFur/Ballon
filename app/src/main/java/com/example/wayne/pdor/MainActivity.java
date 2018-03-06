@@ -97,8 +97,8 @@ public class MainActivity extends AppCompatActivity implements Retrive_info.Call
 
     //Callback function implement for Service
     public void updateServiceRetriveMsg(String _url){
-        Log.w(TAG, _url);
-        Log.w(TAG, "Get Service callback");
+//        Log.w(TAG, _url);
+//        Log.w(TAG, "Get Service callback");
     }
 
     @Override

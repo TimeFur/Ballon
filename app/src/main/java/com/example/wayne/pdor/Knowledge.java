@@ -1,9 +1,11 @@
 package com.example.wayne.pdor;
 
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.support.v4.app.FragmentManager;
@@ -25,7 +27,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class Knowledge extends AppCompatActivity implements Retrive_info.Callback{
+public class Knowledge extends AppCompatActivity{
 
     static String url_db[] = { "https://www.google.com.tw",
                         "https://pnn.tw/",
@@ -36,8 +38,9 @@ public class Knowledge extends AppCompatActivity implements Retrive_info.Callbac
     static  ArrayList fragement_list = new ArrayList();
     Retrive_info retrive_info;
     PagerAdapter pager_adpt;
+    ReceiveServiceMsg service_receiver;
+    String ServiceReceiver_TAG = "retrieve_info.service.msg";
     String TAG = "KNOWLEDGE";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,31 +65,21 @@ public class Knowledge extends AppCompatActivity implements Retrive_info.Callbac
             }
         });
 
-        //
-        Intent service_intent = new Intent();
-        service_intent.setClass(this, Retrive_info.class);
-        bindService(service_intent, mService, Context.BIND_AUTO_CREATE);
+        service_receiver = new ReceiveServiceMsg();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ServiceReceiver_TAG);
+        registerReceiver(service_receiver, intentFilter);
     }
 
-    public ServiceConnection mService = new ServiceConnection(){
-
+    public class ReceiveServiceMsg extends BroadcastReceiver{
         @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            Retrive_info.localBinder service_binder = (Retrive_info.localBinder) service;
-            retrive_info = service_binder.getBinder(); //get the instance
-            retrive_info.register_cb_function(Knowledge.this); //register callback
+        public void onReceive(Context context, Intent intent) {
+            String _url = intent.getStringExtra("_url");
+            fragement_list.add(_url);
+            pager_adpt.notifyDataSetChanged(); //refresh the fragment
+
+            Log.w(TAG, "Broadcast get info: " + _url);
         }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-
-        }
-    };
-
-    @Override
-    public void updateServiceRetriveMsg(String v) {
-        fragement_list.add(v);
-        pager_adpt.notifyDataSetChanged(); //refresh the fragment
     }
 
     private class ScreenSlidePagerAdapter extends FragmentPagerAdapter {

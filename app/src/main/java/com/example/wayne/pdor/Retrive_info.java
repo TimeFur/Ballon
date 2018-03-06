@@ -22,15 +22,21 @@ import java.util.List;
 public class Retrive_info extends Service {
 
     final String TAG = "Retrive_info";
+    String ServiceReceiver_TAG = "retrieve_info.service.msg";
     Callback main_activity;
     Handler handle;
     final localBinder mBinder = new localBinder();
+    Intent service_broadcast;
 
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "Create Retrive_info Service");
 
+        //
+        service_broadcast = new Intent(ServiceReceiver_TAG);
+
+        //
         handle = new Handler();
         handle.post(this.serviceRunnable);
 
@@ -42,7 +48,11 @@ public class Retrive_info extends Service {
                 ClipData.Item item = data.getItemAt(0);
                 String v = item.getText().toString();
                 main_activity.updateServiceRetriveMsg(v);
-                Log.w(TAG,v);
+
+                service_broadcast.putExtra("_url", v);
+                sendBroadcast(service_broadcast);
+
+                Log.w(TAG,"Send Clip data");
             }
         });
     }
