@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity implements Retrive_info.Call
 
     final String TAG = "Main Activity";
     Retrive_info Retrive_service;
+    public DB_Function db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,12 +81,17 @@ public class MainActivity extends AppCompatActivity implements Retrive_info.Call
         Log.d(TAG,"Service  Start");
 
         //Log to database
-        DB_Function db = new DB_Function(MainActivity.this);
+        db = new DB_Function(MainActivity.this);
         db.InsertData("www.google.com");
         Log.d(TAG,"DB  Start");
 
     }
-
+    public DB_Function getDB(){
+            return db;
+    }
+    public void test(){
+        Log.w(TAG, "DataBase Test");
+    }
     public ServiceConnection mService = new ServiceConnection() {
 
         @Override

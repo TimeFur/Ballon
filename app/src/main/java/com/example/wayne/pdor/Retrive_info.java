@@ -56,6 +56,10 @@ public class Retrive_info extends Service {
             }
         });
 
+        //
+        DB_Function db = new DB_Function(Retrive_info.this);
+        String v = db.GetData(1);
+        Log.w(TAG,"GET-----------------------"+v);
 
     }
 

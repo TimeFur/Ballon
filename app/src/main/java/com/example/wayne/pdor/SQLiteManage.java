@@ -5,10 +5,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 /**
- * Created by Wayne on 2018/3/7.
+ * Created by Wayne on 2018/3/8.
  */
 
-class SQLiteManage extends SQLiteOpenHelper {
+public class SQLiteManage extends SQLiteOpenHelper {
 
     static String DATABASE_NAME = "DATABASE";
     static int VERSION = 1;
@@ -20,6 +20,7 @@ class SQLiteManage extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+
         db.execSQL(DB_Function.CREATE_TABLE);
     }
 
@@ -30,9 +31,10 @@ class SQLiteManage extends SQLiteOpenHelper {
 
     public static SQLiteDatabase getDataBase(Context context)
     {
-        if (db == null)
+        if (db == null || !db.isOpen())
             db = new SQLiteManage(context, DATABASE_NAME,null, VERSION).getWritableDatabase();
 
         return db;
     }
 }
+

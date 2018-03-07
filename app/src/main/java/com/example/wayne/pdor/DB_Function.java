@@ -26,8 +26,8 @@ public class DB_Function {
     //INTEGER -> int, short, long, byte
     //TEXT -> String
     //REAL -> float, double
-    public static String CREATE_TABLE = "CREATE TABLE" + TABLE_NAME
-                                            + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " //set as auto increase
+    public static String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME
+                                            + " (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " //set as auto increase
                                             + DATETIME + " INTEGER NOT NULL, "
                                             + URL + " TEXT NOT NULL, "
                                             + NAME + " TEXT NOT NULL" + ")";
@@ -45,6 +45,8 @@ public class DB_Function {
         ContentValues c = new ContentValues();
 
         c.put(URL, _url);
+        c.put(DATETIME, 20180308);
+        c.put(NAME, "Google");
 
         db.insert(TABLE_NAME, null, c);
 
@@ -53,14 +55,15 @@ public class DB_Function {
     //Get data
     public String GetData (long _id){
         String _url = "";
-        String locate = "KEY_ID = " + _id;
+        String locate = KEY_ID + " = " + _id;
         Cursor cursor = db.query(TABLE_NAME, null, locate, null, null, null, null, null);
 
         if (cursor.moveToFirst())
         {
-            _url = cursor.getString(0);
+            Log.w(TAG, "First " + _url + "---");
+            _url = cursor.getString(2);
         }
-
+        Log.w(TAG, "Get data " + _url + "---");
         return _url;
     }
     //Revise data
