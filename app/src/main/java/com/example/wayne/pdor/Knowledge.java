@@ -69,6 +69,8 @@ public class Knowledge extends AppCompatActivity{
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ServiceReceiver_TAG);
         registerReceiver(service_receiver, intentFilter);
+
+//        (MainActivity)getApplication();
     }
 
     public class ReceiveServiceMsg extends BroadcastReceiver{

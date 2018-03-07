@@ -55,6 +55,8 @@ public class Retrive_info extends Service {
                 Log.w(TAG,"Send Clip data");
             }
         });
+
+
     }
 
     @Override

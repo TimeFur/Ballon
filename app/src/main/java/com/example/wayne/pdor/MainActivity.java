@@ -78,6 +78,12 @@ public class MainActivity extends AppCompatActivity implements Retrive_info.Call
         //startService(startservice);
         bindService(startservice, mService, Context.BIND_AUTO_CREATE);
         Log.d(TAG,"Service  Start");
+
+        //Log to database
+        DB_Function db = new DB_Function(MainActivity.this);
+        db.InsertData("www.google.com");
+        Log.d(TAG,"DB  Start");
+
     }
 
     public ServiceConnection mService = new ServiceConnection() {
