@@ -39,6 +39,7 @@ public class DB_Function {
     public DB_Function(Context context){
         //Get the database from the SQLiteManage
         db = SQLiteManage.getDataBase(context);
+
     }
 
 
@@ -85,7 +86,14 @@ public class DB_Function {
 
     //Revise data
     //Delete data
+    public boolean delete(long _id){
+        String locate = KEY_ID + " = " + _id;
+        return (db.delete(TABLE_NAME, locate, null) > 0);
+    }
 
+    public void deleteTABLE(){
+        db.execSQL("DROP TABLE IF EXISTS "+ TABLE_NAME);
+    }
 
 
 }

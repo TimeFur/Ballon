@@ -75,8 +75,10 @@ public class Knowledge extends AppCompatActivity{
         db = new DB_Function(Knowledge.this);
 //        String v = db.GetData(1);
         ArrayList<String> data_list = db.getAllData();
-        for (int i = 0; i < data_list.size(); i++)
+        int size = data_list.size();
+        for (int i = 0; i < size; i++)
         {
+            Log.w(TAG, data_list.get(i));
 //            fragement_list.add(data_list.get(i));
         }
 

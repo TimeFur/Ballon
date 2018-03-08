@@ -82,8 +82,6 @@ public class MainActivity extends AppCompatActivity implements Retrive_info.Call
 
         //Log to database
         db = new DB_Function(MainActivity.this);
-//        db.InsertData("www.google128.com");
-
         Log.d(TAG,"DB  Start");
 
     }

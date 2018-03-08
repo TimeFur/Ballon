@@ -25,15 +25,20 @@ public class SQLiteManage extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        final String DROP_TABLE = "DROP TABLE IF EXISTS " + DB_Function.TABLE_NAME;
 
+        db.execSQL(DROP_TABLE);
+
+        onCreate(db);
     }
 
     //through Database helper to get the Database
     public static SQLiteDatabase getDataBase(Context context)
     {
+
         if (db == null || !db.isOpen())
             db = new SQLiteManage(context, DATABASE_NAME,null, VERSION).getWritableDatabase();
-
+//        new SQLiteManage(context, DATABASE_NAME,null, VERSION).onUpgrade(db,1,2);
         return db;
     }
 }
