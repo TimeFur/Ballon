@@ -39,6 +39,7 @@ public class Knowledge extends AppCompatActivity{
     Retrive_info retrive_info;
     PagerAdapter pager_adpt;
     ReceiveServiceMsg service_receiver;
+    DB_Function db = null;
     String ServiceReceiver_TAG = "retrieve_info.service.msg";
     String TAG = "KNOWLEDGE";
 
@@ -69,6 +70,15 @@ public class Knowledge extends AppCompatActivity{
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ServiceReceiver_TAG);
         registerReceiver(service_receiver, intentFilter);
+
+        //Log to database
+        db = new DB_Function(Knowledge.this);
+//        String v = db.GetData(1);
+        ArrayList<String> data_list = db.getAllData();
+        for (int i = 0; i < data_list.size(); i++)
+        {
+//            fragement_list.add(data_list.get(i));
+        }
 
     }
 

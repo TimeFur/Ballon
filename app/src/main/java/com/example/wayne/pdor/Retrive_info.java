@@ -27,6 +27,7 @@ public class Retrive_info extends Service {
     Handler handle;
     final localBinder mBinder = new localBinder();
     Intent service_broadcast;
+    DB_Function db = null;
 
     @Override
     public void onCreate() {
@@ -49,17 +50,21 @@ public class Retrive_info extends Service {
                 String v = item.getText().toString();
                 main_activity.updateServiceRetriveMsg(v);
 
+                //notification
                 service_broadcast.putExtra("_url", v);
                 sendBroadcast(service_broadcast);
+
+                //Sqlite
+                db.InsertData(v);
 
                 Log.w(TAG,"Send Clip data");
             }
         });
 
         //
-        DB_Function db = new DB_Function(Retrive_info.this);
-        String v = db.GetData(1);
-        Log.w(TAG,"GET-----------------------"+v);
+        db = new DB_Function(Retrive_info.this);
+//        String v = db.GetData(1);
+//        Log.w(TAG,"GET-----------------------"+v);
 
     }
 

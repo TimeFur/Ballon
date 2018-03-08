@@ -20,7 +20,6 @@ public class SQLiteManage extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-
         db.execSQL(DB_Function.CREATE_TABLE);
     }
 
@@ -29,6 +28,7 @@ public class SQLiteManage extends SQLiteOpenHelper {
 
     }
 
+    //through Database helper to get the Database
     public static SQLiteDatabase getDataBase(Context context)
     {
         if (db == null || !db.isOpen())

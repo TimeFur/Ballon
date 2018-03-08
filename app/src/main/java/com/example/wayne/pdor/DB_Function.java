@@ -7,6 +7,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import java.util.ArrayList;
+
 /**
  * Created by Wayne on 2018/3/7.
  */
@@ -40,7 +42,7 @@ public class DB_Function {
     }
 
 
-    //Insert data
+    //Insert data (For "URL_TABLE")
     public void InsertData (String _url){
         ContentValues c = new ContentValues();
 
@@ -50,9 +52,9 @@ public class DB_Function {
 
         db.insert(TABLE_NAME, null, c);
 
-        Log.w(TAG, "Insert data" + _url);
+        Log.w(TAG, "Insert data = " + _url);
     }
-    //Get data
+    //Get data (For "URL_TABLE")
     public String GetData (long _id){
         String _url = "";
         String locate = KEY_ID + " = " + _id;
@@ -60,12 +62,27 @@ public class DB_Function {
 
         if (cursor.moveToFirst())
         {
-            Log.w(TAG, "First " + _url + "---");
-            _url = cursor.getString(2);
+            _url = cursor.getString(2); // the url of this col
         }
-        Log.w(TAG, "Get data " + _url + "---");
+        Log.w(TAG, "Get data = " + _url);
         return _url;
     }
+
+    public ArrayList getAllData(){
+        ArrayList<String> url_list = new ArrayList<String>();
+
+        Cursor cursor = db.query(TABLE_NAME, null, null, null, null, null, null, null);
+
+        while(cursor.moveToNext())
+        {
+            String db_url = cursor.getString(2); // the url of this col
+            url_list.add(db_url);
+            Log.w(TAG, cursor.getInt(0) + "--------------" + db_url);
+        }
+
+        return url_list;
+    }
+
     //Revise data
     //Delete data
 
