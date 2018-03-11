@@ -9,6 +9,8 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+import static com.example.wayne.pdor.SQLiteManage.*;
+
 /**
  * Created by Wayne on 2018/3/7.
  */
@@ -38,8 +40,7 @@ public class DB_Function {
 
     public DB_Function(Context context){
         //Get the database from the SQLiteManage
-        db = SQLiteManage.getDataBase(context);
-
+        db = getDataBase(context);
     }
 
 
@@ -92,7 +93,9 @@ public class DB_Function {
     }
 
     public void deleteTABLE(){
+
         db.execSQL("DROP TABLE IF EXISTS "+ TABLE_NAME);
+        db.execSQL(DB_Function.CREATE_TABLE);
     }
 
 

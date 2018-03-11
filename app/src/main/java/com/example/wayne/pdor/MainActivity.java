@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements Retrive_info.Call
 
         //Log to database
         db = new DB_Function(MainActivity.this);
+
         Log.d(TAG,"DB  Start");
 
     }

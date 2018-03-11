@@ -45,19 +45,20 @@ public class Retrive_info extends Service {
         cm.addPrimaryClipChangedListener(new ClipboardManager.OnPrimaryClipChangedListener() {
             @Override
             public void onPrimaryClipChanged() {
+
                 ClipData data = cm.getPrimaryClip();
                 ClipData.Item item = data.getItemAt(0);
                 String v = item.getText().toString();
                 main_activity.updateServiceRetriveMsg(v);
 
                 //notification
-                service_broadcast.putExtra("_url", v);
-                sendBroadcast(service_broadcast);
+//                service_broadcast.putExtra("_url", v);
+//                sendBroadcast(service_broadcast);
 
                 //Sqlite
                 db.InsertData(v);
 
-                Log.w(TAG,"Send Clip data");
+                Log.w(TAG,"Send Clip data" + v);
             }
         });
 
