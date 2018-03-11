@@ -1,5 +1,6 @@
 package com.example.wayne.pdor;
 
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -29,15 +30,12 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+
 public class Knowledge extends AppCompatActivity{
 
-    static String url_db[] = { "https://www.google.com.tw",
-                        "https://pnn.tw/",
-                        "https://gnn.gamer.com.tw/2/159522.html",
-                        "https://www.bnext.com.tw/",
-                        "https://buzzorange.com/techorange/"};
-
-    static  ArrayList fragement_list = new ArrayList();
+    static  ArrayList fragement_list;
     Retrive_info retrive_info;
     PagerAdapter pager_adpt;
     ReceiveServiceMsg service_receiver;
@@ -48,11 +46,13 @@ public class Knowledge extends AppCompatActivity{
     String ServiceReceiver_TAG = "retrieve_info.service.msg";
     String TAG = "KNOWLEDGE";
 
+    @SuppressLint("HandlerLeak")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_knowledge);
 
+        fragement_list = new ArrayList();
         //
         ViewPager view_pager = (ViewPager) findViewById(R.id.viewPager);
         pager_adpt = new ScreenSlidePagerAdapter(getSupportFragmentManager());
@@ -79,7 +79,6 @@ public class Knowledge extends AppCompatActivity{
 
         //Log to database
         db = new DB_Function(Knowledge.this);
-//        String v = db.GetData(1);
 
         //https://www.youtube.com
         mhandler_list = new Handler(){
@@ -88,33 +87,39 @@ public class Knowledge extends AppCompatActivity{
                 super.handleMessage(msg);
                 Log.w(TAG, "Hanlder----in");
 
+                boolean update = FALSE;
+
                 //Retrieve data from database
                 ArrayList<String> data_list = db.getAllData();
                 int size = data_list.size();
                 for (int i = 0; i < size; i++)
                 {
+                    if (fragement_list.contains(data_list.get(i)) == FALSE
+                            && (data_list.get(i).indexOf("www") != -1 || data_list.get(i).indexOf("http") != -1))
+                    {
+                        fragement_list.add(data_list.get(i));
+                        update = TRUE;
+                    }
                     Log.w(TAG, "DB---->" + data_list.get(i));
                 }
+                if (update == TRUE)
+                    pager_adpt.notifyDataSetChanged(); //refresh the fragment
 
                 //Show the fragment current url
-                size = fragement_list.size();
-                for (int i = 0; i < size; i++)
-                {
-                    Log.w(TAG, "Fragment---->" + fragement_list.get(i).toString());
-                }
+//                size = fragement_list.size();
+//                for (int i = 0; i < size; i++)
+//                {
+//                    Log.w(TAG, "Fragment---->" + fragement_list.get(i).toString());
+//                }
 
-//                fragement_list.add(data_list.get(size - 1));
-//                fragement_list.add("https://www.youtube.com");
-//                pager_adpt.notifyDataSetChanged(); //refresh the fragment
             }
         };
-        //"https://www.youtube.com/"
         mthread_list = new Thread(new Runnable(){
             @Override
             public void run() {
-                Message msg = new Message();
-                msg.what = 1;
-                mhandler_list.sendMessage(msg);
+                    Message msg = new Message();
+                    msg.what = 1;
+                    mhandler_list.sendMessage(msg);
             }
         });
 
@@ -125,9 +130,23 @@ public class Knowledge extends AppCompatActivity{
     public class ReceiveServiceMsg extends BroadcastReceiver{
         @Override
         public void onReceive(Context context, Intent intent) {
+            boolean update = FALSE;
             String _url = intent.getStringExtra("_url");
-//            fragement_list.add(_url);
-//            pager_adpt.notifyDataSetChanged(); //refresh the fragment
+
+            ArrayList<String> data_list = db.getAllData();
+            int size = data_list.size();
+            for (int i = 0; i < size; i++)
+            {
+                if (fragement_list.contains(data_list.get(i)) == FALSE
+                        && (data_list.get(i).indexOf("www") != -1 || data_list.get(i).indexOf("http") != -1))
+                {
+                    fragement_list.add(data_list.get(i));
+                    update = TRUE;
+                }
+                Log.w(TAG, "DB---->" + data_list.get(i));
+            }
+            if (update == TRUE)
+                pager_adpt.notifyDataSetChanged(); //refresh the fragment
 
 //            Log.w(TAG, "Broadcast get info: " + _url);
         }

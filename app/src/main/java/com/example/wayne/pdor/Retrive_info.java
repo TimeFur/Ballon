@@ -52,8 +52,8 @@ public class Retrive_info extends Service {
                 main_activity.updateServiceRetriveMsg(v);
 
                 //notification
-//                service_broadcast.putExtra("_url", v);
-//                sendBroadcast(service_broadcast);
+                service_broadcast.putExtra("_url", v);
+                sendBroadcast(service_broadcast);
 
                 //Sqlite
                 db.InsertData(v);
