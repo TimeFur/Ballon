@@ -217,13 +217,14 @@ public class Knowledge extends AppCompatActivity{
             //Store the screen shot
             File img_file = new File(shot_path);
             FileOutputStream outputStream = new FileOutputStream(img_file);
-//            map.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
-//
-//            outputStream.flush(); //Flushes this output stream and forces any buffered output bytes to be written out.
-//            outputStream.close();
-//
-//            openSnapshot(img_file);
+            map.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
+
+            outputStream.flush(); //Flushes this output stream and forces any buffered output bytes to be written out.
+            outputStream.close();
+
+            openSnapshot(img_file);
         }catch (Throwable e){
+            Log.e(TAG,e.toString());
             e.printStackTrace();
         }
     }
@@ -235,7 +236,7 @@ public class Knowledge extends AppCompatActivity{
 
         i.setDataAndType(uri, "image/*");
         startActivity(i);
-
     }
+
 }
 
