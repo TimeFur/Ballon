@@ -8,6 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -28,14 +31,19 @@ import android.webkit.WebViewFragment;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FilterOutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 
 public class Knowledge extends AppCompatActivity{
 
-    static  ArrayList fragement_list;
+    boolean once = FALSE;
+    static  ArrayList fragement_list = null;
     Retrive_info retrive_info;
     PagerAdapter pager_adpt;
     ReceiveServiceMsg service_receiver;
@@ -51,8 +59,8 @@ public class Knowledge extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_knowledge);
-
-        fragement_list = new ArrayList();
+        if (fragement_list == null)
+            fragement_list = new ArrayList();
         //
         ViewPager view_pager = (ViewPager) findViewById(R.id.viewPager);
         pager_adpt = new ScreenSlidePagerAdapter(getSupportFragmentManager());
@@ -64,14 +72,17 @@ public class Knowledge extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 db.deleteTABLE();
-//                if (fragement_list.size() < url_db.length)
-//                {
-//                    fragement_list.add(url_db[fragement_list.size()]);
-//                    pager_adpt.notifyDataSetChanged(); //refresh the fragment
-//                }
+            }
+        });
+        Button screen_shot = (Button)findViewById(R.id.screen_button);
+        screen_shot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ScreenShot("1");
             }
         });
 
+                //Broadcast receiver
         service_receiver = new ReceiveServiceMsg();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ServiceReceiver_TAG);
@@ -79,8 +90,6 @@ public class Knowledge extends AppCompatActivity{
 
         //Log to database
         db = new DB_Function(Knowledge.this);
-
-        //https://www.youtube.com
         mhandler_list = new Handler(){
             @Override
             public void handleMessage(Message msg) {
@@ -104,15 +113,8 @@ public class Knowledge extends AppCompatActivity{
                 }
                 if (update == TRUE)
                     pager_adpt.notifyDataSetChanged(); //refresh the fragment
-
-                //Show the fragment current url
-//                size = fragement_list.size();
-//                for (int i = 0; i < size; i++)
-//                {
-//                    Log.w(TAG, "Fragment---->" + fragement_list.get(i).toString());
-//                }
-
             }
+
         };
         mthread_list = new Thread(new Runnable(){
             @Override
@@ -147,11 +149,14 @@ public class Knowledge extends AppCompatActivity{
             }
             if (update == TRUE)
                 pager_adpt.notifyDataSetChanged(); //refresh the fragment
-
 //            Log.w(TAG, "Broadcast get info: " + _url);
         }
     }
 
+
+    /*------------------------------------------------
+                Fragment Adapter
+     ------------------------------------------------*/
     private class ScreenSlidePagerAdapter extends FragmentPagerAdapter {
         public ScreenSlidePagerAdapter(FragmentManager fm) {
             super(fm);
@@ -192,4 +197,45 @@ public class Knowledge extends AppCompatActivity{
             return rootView;
         }
     }
+
+    /*------------------------------------------------
+                    Screen Shot
+     ------------------------------------------------*/
+    public void ScreenShot(String name){
+        try{
+            int quality = 100;
+            //img path definition
+            String shot_path = Environment.getExternalStorageDirectory().getPath() + "/" + name + ".jpg"; //Retrieve the sdcard status
+            Log.w(TAG,shot_path);
+
+            //create bitmap shot
+            View v1 = getWindow().getDecorView().getRootView();
+            v1.setDrawingCacheEnabled(true);                        //set to build the map to Cache
+            Bitmap map = Bitmap.createBitmap(v1.getDrawingCache());   //By getting the Cache, it could return the bitmap type
+            v1.setDrawingCacheEnabled(false);
+
+            //Store the screen shot
+            File img_file = new File(shot_path);
+            FileOutputStream outputStream = new FileOutputStream(img_file);
+//            map.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
+//
+//            outputStream.flush(); //Flushes this output stream and forces any buffered output bytes to be written out.
+//            outputStream.close();
+//
+//            openSnapshot(img_file);
+        }catch (Throwable e){
+            e.printStackTrace();
+        }
+    }
+
+    public void openSnapshot(File img_file){
+        Intent i = new Intent();
+        i.setAction(Intent.ACTION_VIEW);
+        Uri uri = Uri.fromFile(img_file);
+
+        i.setDataAndType(uri, "image/*");
+        startActivity(i);
+
+    }
 }
+
