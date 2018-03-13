@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
@@ -54,6 +55,15 @@ public class Knowledge extends AppCompatActivity{
     String ServiceReceiver_TAG = "retrieve_info.service.msg";
     String TAG = "KNOWLEDGE";
 
+    public class Coor{
+        public int x;
+        public int y;
+        public Coor(int _x, int _y){
+            x = _x;
+            y = _y;
+        }
+    }
+
     @SuppressLint("HandlerLeak")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +88,9 @@ public class Knowledge extends AppCompatActivity{
         screen_shot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ScreenShot("1");
+                Coor left_up_coor = new Coor(0, 0);
+                Coor right_down_coor = new Coor(0, 0);
+                ScreenShot("1", left_up_coor, right_down_coor);
             }
         });
 
@@ -201,9 +213,10 @@ public class Knowledge extends AppCompatActivity{
     /*------------------------------------------------
                     Screen Shot
      ------------------------------------------------*/
-    public void ScreenShot(String name){
+    public void ScreenShot(String name, Coor left_up_coor, Coor right_down_coor){
         try{
             int quality = 100;
+            float resize = 5;
             //img path definition
             String shot_path = Environment.getExternalStorageDirectory().getPath() + "/" + name + ".jpg"; //Retrieve the sdcard status
             Log.w(TAG,shot_path);
@@ -217,12 +230,21 @@ public class Knowledge extends AppCompatActivity{
             //Store the screen shot
             File img_file = new File(shot_path);
             FileOutputStream outputStream = new FileOutputStream(img_file);
-            map.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
+
+            //customize the specfic area
+            int w = map.getWidth();
+            int h = map.getHeight();
+            Matrix m = new Matrix();
+            m.postScale(resize,resize);
+            Bitmap result_map = Bitmap.createBitmap(map, w/4,  h/4, w/3, h/3, m, true);
+
+            //save bitmap
+            result_map.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
 
             outputStream.flush(); //Flushes this output stream and forces any buffered output bytes to be written out.
             outputStream.close();
 
-            openSnapshot(img_file);
+//            openSnapshot(img_file);
         }catch (Throwable e){
             Log.e(TAG,e.toString());
             e.printStackTrace();
@@ -237,6 +259,8 @@ public class Knowledge extends AppCompatActivity{
         i.setDataAndType(uri, "image/*");
         startActivity(i);
     }
+
+
 
 }
 

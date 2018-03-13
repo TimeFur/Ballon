@@ -13,7 +13,10 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static java.lang.Boolean.FALSE;
 
 /**
  * Created by Wayne on 2018/2/28.
@@ -56,7 +59,14 @@ public class Retrive_info extends Service {
                 sendBroadcast(service_broadcast);
 
                 //Sqlite
-                db.InsertData(v);
+                ArrayList<String> data_list = db.getAllData();
+                if (data_list.contains(v) == FALSE)
+                {
+                    if(v.indexOf("www") != -1 || v.indexOf("http") != -1)
+                    {
+                        db.InsertData(v);
+                    }
+                }
 
                 Log.w(TAG,"Send Clip data" + v);
             }
