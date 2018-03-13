@@ -1,22 +1,27 @@
 package com.example.wayne.pdor;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -30,6 +35,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.webkit.WebViewFragment;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
@@ -188,10 +194,13 @@ public class Knowledge extends AppCompatActivity{
     }
 
     static public class ScreenSlidePageFragment extends android.support.v4.app.Fragment{
+
         int position;
+
         public void get_postion(int pos){
             this.position = pos;
         }
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.screen_slide_page, container, false);
@@ -234,33 +243,37 @@ public class Knowledge extends AppCompatActivity{
             //customize the specfic area
             int w = map.getWidth();
             int h = map.getHeight();
-            Matrix m = new Matrix();
-            m.postScale(resize,resize);
-            Bitmap result_map = Bitmap.createBitmap(map, w/4,  h/4, w/3, h/3, m, true);
+//            Matrix m = new Matrix();
+//            m.postScale(resize,resize);
+//            Bitmap result_map = Bitmap.createBitmap(map, w/4,  h/4, w/3, h/3, m, true);
 
             //save bitmap
-            result_map.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
+//            result_map.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
+            map.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
 
             outputStream.flush(); //Flushes this output stream and forces any buffered output bytes to be written out.
             outputStream.close();
 
-//            openSnapshot(img_file);
+            openSnapshot(shot_path);
         }catch (Throwable e){
             Log.e(TAG,e.toString());
             e.printStackTrace();
         }
     }
 
-    public void openSnapshot(File img_file){
-        Intent i = new Intent();
-        i.setAction(Intent.ACTION_VIEW);
-        Uri uri = Uri.fromFile(img_file);
+    public void openSnapshot(String shot_path){
+        AlertDialog.Builder alert_view = new AlertDialog.Builder(this);
 
-        i.setDataAndType(uri, "image/*");
-        startActivity(i);
+        LayoutInflater factory = LayoutInflater.from(this);
+        View v = factory.inflate(R.layout.diag_screenshot, null); //Retrieve the view from specfic layout from current context
+
+        alert_view.setView(v);
+
+        ImageView img = v.findViewById(R.id.screenshot_imgview);
+        Bitmap bitmap = BitmapFactory.decodeFile(shot_path);
+        img.setImageBitmap(bitmap);
+
+        alert_view.show();
     }
-
-
-
 }
 
