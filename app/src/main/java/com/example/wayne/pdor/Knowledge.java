@@ -12,13 +12,17 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.FileProvider;
@@ -26,8 +30,10 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
@@ -261,6 +267,7 @@ public class Knowledge extends AppCompatActivity{
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     public void openSnapshot(String shot_path){
         AlertDialog.Builder alert_view = new AlertDialog.Builder(this);
 
@@ -269,11 +276,54 @@ public class Knowledge extends AppCompatActivity{
 
         alert_view.setView(v);
 
-        ImageView img = v.findViewById(R.id.screenshot_imgview);
-        Bitmap bitmap = BitmapFactory.decodeFile(shot_path);
-        img.setImageBitmap(bitmap);
+        final ImageView img = (ImageView)v.findViewById(R.id.screenshot_imgview);
+        final Bitmap bitmap = BitmapFactory.decodeFile(shot_path);
 
+        //customize
+
+        img.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                float x = event.getX();
+                float y = event.getY();
+                Log.w(TAG,"X = " + x);
+                Log.w(TAG,"Y = " + y);
+                Bitmap mutableBitmap = Capture_bitmap(bitmap, x, y);
+                img.setImageBitmap(mutableBitmap);
+                return false;
+            }
+        });
+        img.setImageBitmap(bitmap);
         alert_view.show();
+    }
+
+//    public class MyView extends ImageView {
+//        public MyView(Context context) {
+//            super(context);
+//        }
+//
+//        @Override
+//        protected void onDraw(Canvas canvas) {
+//            super.onDraw(canvas);
+//        }
+//    }
+
+    public Bitmap Capture_bitmap(Bitmap src_bitmap, float x, float y){
+        int r = 100;
+        float c_x = x;
+        float c_y = y;
+
+        Bitmap mutableBitmap = src_bitmap.copy(Bitmap.Config.ARGB_8888, true); //avoid collision with the origin bitmap
+
+        Canvas mcanvas = new Canvas(mutableBitmap);
+        Paint mpaint = new Paint();
+
+        mpaint.setColor(Color.YELLOW);
+        mcanvas.drawCircle(c_x, c_y, r, mpaint);
+        mcanvas.save( Canvas.ALL_SAVE_FLAG );
+        mcanvas.restore();
+
+        return mutableBitmap;
     }
 }
 
