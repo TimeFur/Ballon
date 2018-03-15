@@ -239,11 +239,10 @@ public class Knowledge extends AppCompatActivity{
      ------------------------------------------------*/
     public void ScreenShot(String name, Coor left_up_coor, Coor right_down_coor){
         try{
-            int quality = 100;
-            float resize = 5;
+//            int quality = 100;
+
             //img path definition
-            String shot_path = Environment.getExternalStorageDirectory().getPath() + "/" + name + ".jpg"; //Retrieve the sdcard status
-            Log.w(TAG,shot_path);
+//            String shot_path = Environment.getExternalStorageDirectory().getPath() + "/" + name + ".jpg"; //Retrieve the sdcard status
 
             //create bitmap shot
             View v1 = getWindow().getDecorView().getRootView();
@@ -252,24 +251,16 @@ public class Knowledge extends AppCompatActivity{
             v1.setDrawingCacheEnabled(false);
 
             //Store the screen shot
-            File img_file = new File(shot_path);
-            FileOutputStream outputStream = new FileOutputStream(img_file);
-
-            //customize the specfic area
-            int w = map.getWidth();
-            int h = map.getHeight();
-//            Matrix m = new Matrix();
-//            m.postScale(resize,resize);
-//            Bitmap result_map = Bitmap.createBitmap(map, w/4,  h/4, w/3, h/3, m, true);
+//            File img_file = new File(shot_path);
+//            FileOutputStream outputStream = new FileOutputStream(img_file);
 
             //save bitmap
-//            result_map.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
-            map.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
+//            map.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
+//
+//            outputStream.flush(); //Flushes this output stream and forces any buffered output bytes to be written out.
+//            outputStream.close();
 
-            outputStream.flush(); //Flushes this output stream and forces any buffered output bytes to be written out.
-            outputStream.close();
-
-            openSnapshot(shot_path);
+            openSnapshot(map);
         }catch (Throwable e){
             Log.e(TAG,e.toString());
             e.printStackTrace();
@@ -277,7 +268,7 @@ public class Knowledge extends AppCompatActivity{
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    public void openSnapshot(String shot_path){
+    public void openSnapshot(Bitmap src_map){
         AlertDialog.Builder alert_view = new AlertDialog.Builder(this);
 
         LayoutInflater factory = LayoutInflater.from(this);
@@ -286,10 +277,9 @@ public class Knowledge extends AppCompatActivity{
         alert_view.setView(v);
 
         final ImageView img = (ImageView)v.findViewById(R.id.screenshot_imgview);
-        final Bitmap bitmap = BitmapFactory.decodeFile(shot_path);
+        final Bitmap bitmap = src_map;
 
         //customize
-
         img.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -316,7 +306,7 @@ public class Knowledge extends AppCompatActivity{
                     capture_start_y = Start_y;
                     capture_end_x = End_x;
                     capture_end_y = End_y;
-                    
+
                     Start_x = 0xFFFF;
                     Start_y = 0xFFFF;
                 }
@@ -342,7 +332,6 @@ public class Knowledge extends AppCompatActivity{
         mpaint.setStrokeWidth(2);
         mpaint.setStyle(Paint.Style.STROKE);
 
-        mcanvas.drawBitmap(src_bitmap, new Matrix(), null);
         mcanvas.drawRect(Start_x, Start_y, c_x, c_y, mpaint);
 
         mcanvas.save( Canvas.ALL_SAVE_FLAG );
