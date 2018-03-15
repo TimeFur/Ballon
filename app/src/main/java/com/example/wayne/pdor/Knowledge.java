@@ -12,10 +12,12 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapRegionDecoder;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -23,6 +25,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.FileProvider;
@@ -44,9 +47,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilterOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -57,13 +64,12 @@ public class Knowledge extends AppCompatActivity{
 
     boolean once = FALSE;
     static  ArrayList fragement_list = null;
-    Retrive_info retrive_info;
     PagerAdapter pager_adpt;
     ReceiveServiceMsg service_receiver;
     DB_Function db = null;
     Handler mhandler_list = null;
     Thread mthread_list = null;
-
+    ScreenSlidePageFragment fragment;
     float Start_x = 0xFFFF;
     float Start_y = 0xFFFF;
     float End_x = 0xFFFF;
@@ -115,7 +121,7 @@ public class Knowledge extends AppCompatActivity{
             }
         });
 
-                //Broadcast receiver
+        //Broadcast receiver
         service_receiver = new ReceiveServiceMsg();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ServiceReceiver_TAG);
@@ -198,7 +204,7 @@ public class Knowledge extends AppCompatActivity{
         @Override
         public android.support.v4.app.Fragment getItem(int position)
         {
-            ScreenSlidePageFragment fragment = new ScreenSlidePageFragment();
+            fragment = new ScreenSlidePageFragment();
             fragment.get_postion(position);
             return fragment;
         }
@@ -211,9 +217,14 @@ public class Knowledge extends AppCompatActivity{
     static public class ScreenSlidePageFragment extends android.support.v4.app.Fragment{
 
         int position;
+        View current_view;
 
         public void get_postion(int pos){
             this.position = pos;
+        }
+
+        public View getview(){
+            return this.current_view;
         }
 
         @Override
@@ -229,7 +240,7 @@ public class Knowledge extends AppCompatActivity{
             tv.setText("Hi" + this.position);
             String _url = fragement_list.get(this.position).toString();
             web_view.loadUrl(_url);
-
+            this.current_view = rootView;
             return rootView;
         }
     }
@@ -239,26 +250,13 @@ public class Knowledge extends AppCompatActivity{
      ------------------------------------------------*/
     public void ScreenShot(String name, Coor left_up_coor, Coor right_down_coor){
         try{
-//            int quality = 100;
-
-            //img path definition
-//            String shot_path = Environment.getExternalStorageDirectory().getPath() + "/" + name + ".jpg"; //Retrieve the sdcard status
 
             //create bitmap shot
             View v1 = getWindow().getDecorView().getRootView();
+
             v1.setDrawingCacheEnabled(true);                        //set to build the map to Cache
             Bitmap map = Bitmap.createBitmap(v1.getDrawingCache());   //By getting the Cache, it could return the bitmap type
             v1.setDrawingCacheEnabled(false);
-
-            //Store the screen shot
-//            File img_file = new File(shot_path);
-//            FileOutputStream outputStream = new FileOutputStream(img_file);
-
-            //save bitmap
-//            map.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
-//
-//            outputStream.flush(); //Flushes this output stream and forces any buffered output bytes to be written out.
-//            outputStream.close();
 
             openSnapshot(map);
         }catch (Throwable e){
@@ -277,7 +275,25 @@ public class Knowledge extends AppCompatActivity{
         alert_view.setView(v);
 
         final ImageView img = (ImageView)v.findViewById(R.id.screenshot_imgview);
+        FloatingActionButton creen_capt_btn = v.findViewById(R.id.Screen_capature_btn);
         final Bitmap bitmap = src_map;
+
+        //Floating action btn listener
+//        creen_capt_btn.setSize(1);
+        creen_capt_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.w(TAG, "Action!!!");
+                float vertex[] = {capture_start_x,capture_start_y,capture_end_x,capture_end_y};
+                String name = "1";
+                try {
+                    Store_specfic_area(bitmap, vertex, name);
+                }catch (Throwable e){
+                    Log.e(TAG,e.toString());
+                    e.printStackTrace();
+                }
+            }
+        });
 
         //customize
         img.setOnTouchListener(new View.OnTouchListener() {
@@ -338,6 +354,73 @@ public class Knowledge extends AppCompatActivity{
         mcanvas.restore();
 
         return mutableBitmap;
+    }
+
+    public void Store_specfic_area(Bitmap src_map, float vertex[], String name) throws IOException {
+
+        int quality = 100;
+        int left = 0;
+        int top = 0;
+        int right = 100;
+        int bottom = 100;
+
+        Log.w(TAG, "Vertex[0]" + vertex[0]);
+        Log.w(TAG, "Vertex[1]" + vertex[1]);
+        Log.w(TAG, "Vertex[2]" + vertex[2]);
+        Log.w(TAG, "Vertex[3]" + vertex[3]);
+
+        if (vertex[0] != 0xFFFF){
+            if (vertex[0] < vertex[2]){
+                left = (int)vertex[0];
+                right = (int)vertex[2];
+            }
+            else{
+                left = (int)vertex[2];
+                right = (int)vertex[0];
+            }
+
+            if (vertex[1] < vertex[3]){
+                bottom = (int)vertex[3];
+                top = (int)vertex[1];
+            }
+            else{
+                bottom = (int)vertex[1];
+                top = (int)vertex[3];
+            }
+        }
+        else{
+            Log.w(TAG, "Please choose the area");
+            return;
+        }
+
+        Log.w(TAG, "left = " + left);
+        Log.w(TAG, "top = " + top);
+        Log.w(TAG, "right = " + right);
+        Log.w(TAG, "bottom = " + bottom);
+
+        //img path definition
+        String shot_path = Environment.getExternalStorageDirectory().getPath() + "/" + name + ".jpg"; //Retrieve the sdcard status
+
+        //Store the screen shot
+        File img_file = new File(shot_path);
+        FileOutputStream outputStream = new FileOutputStream(img_file);
+
+        //save bitmap
+//        src_map.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
+        Log.w(TAG, "Scr width = " + src_map.getWidth());
+        Log.w(TAG, "Scr height = " + src_map.getHeight());
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        src_map.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+        InputStream input_stream = new ByteArrayInputStream(baos.toByteArray());
+        BitmapRegionDecoder brd = BitmapRegionDecoder.newInstance(input_stream, true);
+        Bitmap croppedBitmap = brd.decodeRegion(new Rect(left, top, right, bottom), null);
+
+        croppedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
+
+        outputStream.flush(); //Flushes this output stream and forces any buffered output bytes to be written out.
+        outputStream.close();
+
     }
 }
 
