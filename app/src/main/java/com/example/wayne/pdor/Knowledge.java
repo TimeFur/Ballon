@@ -64,6 +64,15 @@ public class Knowledge extends AppCompatActivity{
     Handler mhandler_list = null;
     Thread mthread_list = null;
 
+    float Start_x = 0xFFFF;
+    float Start_y = 0xFFFF;
+    float End_x = 0xFFFF;
+    float End_y = 0xFFFF;
+    float capture_start_x;
+    float capture_start_y;
+    float capture_end_x;
+    float capture_end_y;
+
     String ServiceReceiver_TAG = "retrieve_info.service.msg";
     String TAG = "KNOWLEDGE";
 
@@ -287,12 +296,29 @@ public class Knowledge extends AppCompatActivity{
 
                 float x = event.getX();
                 float y = event.getY();
-
                 if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_MOVE) {
-                    Log.w(TAG,"X = " + x);
-                    Log.w(TAG,"Y = " + y);
+//                    Log.w(TAG,"X = " + x);
+//                    Log.w(TAG,"Y = " + y);
+                    if (Start_x == 0xFFFF)
+                    {
+                        Start_x = x;
+                        Start_y = y;
+                    }
+                    End_x = x;
+                    End_y = y;
+
                     Bitmap mutableBitmap = Capture_bitmap(bitmap, x, y);
                     img.setImageBitmap(mutableBitmap);
+                }
+                if (event.getAction() == MotionEvent.ACTION_UP)
+                {
+                    capture_start_x = Start_x;
+                    capture_start_y = Start_y;
+                    capture_end_x = End_x;
+                    capture_end_y = End_y;
+                    
+                    Start_x = 0xFFFF;
+                    Start_y = 0xFFFF;
                 }
                 return true;
             }
@@ -302,7 +328,6 @@ public class Knowledge extends AppCompatActivity{
         img.setImageBitmap(bitmap);
         alert_view.show();
     }
-
     public Bitmap Capture_bitmap(Bitmap src_bitmap, float x, float y){
         int r = 100;
         float c_x = x;
@@ -318,8 +343,8 @@ public class Knowledge extends AppCompatActivity{
         mpaint.setStyle(Paint.Style.STROKE);
 
         mcanvas.drawBitmap(src_bitmap, new Matrix(), null);
-        mcanvas.drawCircle(c_x, c_y, r, mpaint);
-        
+        mcanvas.drawRect(Start_x, Start_y, c_x, c_y, mpaint);
+
         mcanvas.save( Canvas.ALL_SAVE_FLAG );
         mcanvas.restore();
 
