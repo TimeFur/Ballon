@@ -284,29 +284,24 @@ public class Knowledge extends AppCompatActivity{
         img.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+
                 float x = event.getX();
                 float y = event.getY();
-                Log.w(TAG,"X = " + x);
-                Log.w(TAG,"Y = " + y);
-                Bitmap mutableBitmap = Capture_bitmap(bitmap, x, y);
-                img.setImageBitmap(mutableBitmap);
-                return false;
+
+                if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_MOVE) {
+                    Log.w(TAG,"X = " + x);
+                    Log.w(TAG,"Y = " + y);
+                    Bitmap mutableBitmap = Capture_bitmap(bitmap, x, y);
+                    img.setImageBitmap(mutableBitmap);
+                }
+                return true;
             }
+
         });
+
         img.setImageBitmap(bitmap);
         alert_view.show();
     }
-
-//    public class MyView extends ImageView {
-//        public MyView(Context context) {
-//            super(context);
-//        }
-//
-//        @Override
-//        protected void onDraw(Canvas canvas) {
-//            super.onDraw(canvas);
-//        }
-//    }
 
     public Bitmap Capture_bitmap(Bitmap src_bitmap, float x, float y){
         int r = 100;
@@ -318,8 +313,13 @@ public class Knowledge extends AppCompatActivity{
         Canvas mcanvas = new Canvas(mutableBitmap);
         Paint mpaint = new Paint();
 
-        mpaint.setColor(Color.YELLOW);
+        mpaint.setColor(Color.RED);
+        mpaint.setStrokeWidth(2);
+        mpaint.setStyle(Paint.Style.STROKE);
+
+        mcanvas.drawBitmap(src_bitmap, new Matrix(), null);
         mcanvas.drawCircle(c_x, c_y, r, mpaint);
+        
         mcanvas.save( Canvas.ALL_SAVE_FLAG );
         mcanvas.restore();
 
