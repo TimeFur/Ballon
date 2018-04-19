@@ -61,8 +61,11 @@ public class MainActivity extends AppCompatActivity implements Retrive_info.Call
         ballon_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                intent.setClass(MainActivity.this, Ballon.class);
-                startActivity(intent);
+//                intent.setClass(MainActivity.this, Ballon.class);
+//                startActivity(intent);
+
+                intent.setClass(MainActivity.this, Floating_window.class);
+                startService(intent);
             }
         });
         gift_btn.setOnClickListener(new View.OnClickListener() {
