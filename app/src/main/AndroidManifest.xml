@@ -27,6 +27,10 @@
         <activity android:name=".Collection"></activity>
 
         <service android:name="com.example.wayne.pdor.Retrive_info" />
+        <service android:name="com.example.wayne.pdor.Floating_window"
+                 android:exported="false"/>
+        <service android:name="com.example.wayne.pdor.FlyBitch"
+            android:exported="true"/>
     </application>
 
 </manifest>

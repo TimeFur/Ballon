@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
@@ -11,10 +12,14 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 
 public class MainActivity extends AppCompatActivity implements Retrive_info.Callback{
 
@@ -64,8 +69,10 @@ public class MainActivity extends AppCompatActivity implements Retrive_info.Call
 //                intent.setClass(MainActivity.this, Ballon.class);
 //                startActivity(intent);
 
-                intent.setClass(MainActivity.this, Floating_window.class);
-                startService(intent);
+//                intent.setClass(MainActivity.this, Floating_window.class);
+//                startService(intent);
+                create_floating();
+
             }
         });
         gift_btn.setOnClickListener(new View.OnClickListener() {
@@ -136,5 +143,28 @@ public class MainActivity extends AppCompatActivity implements Retrive_info.Call
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    void create_floating(){
+        LayoutInflater inflater = LayoutInflater.from(this);
+        WindowManager win_manage = null;
+        WindowManager.LayoutParams win_param = null;
+
+        win_manage = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+
+        ImageView win_view = (ImageView)inflater.inflate(R.layout.floating_layout, null, false);
+
+        //Setting window parameter
+        WindowManager.LayoutParams wmParams = new WindowManager.LayoutParams();
+        wmParams.format = PixelFormat.TRANSLUCENT;
+        wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE |
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
+        wmParams.gravity = Gravity.LEFT | Gravity.TOP;
+        wmParams.width = 100;
+        wmParams.height = 100;
+
+        //Bind Setting
+        win_manage.addView(win_view, wmParams);
     }
 }
