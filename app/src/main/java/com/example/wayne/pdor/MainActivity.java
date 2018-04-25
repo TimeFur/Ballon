@@ -5,8 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.PixelFormat;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements Retrive_info.Call
 
     final String TAG = "Main Activity";
     Retrive_info Retrive_service;
+    Floating_window Floating_service;
     public DB_Function db;
 
     @Override
@@ -63,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements Retrive_info.Call
                 startActivity(intent);
             }
         });
+
         ballon_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,9 +75,12 @@ public class MainActivity extends AppCompatActivity implements Retrive_info.Call
 //                startActivity(intent);
 
 //                intent.setClass(MainActivity.this, Floating_window.class);
-//                startService(intent);
-                create_floating();
+//                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+//                intent.setData(Uri.parse("package:" + getPackageName()));
+//                startActivityForResult(intent, 1);
 
+                Intent startservice = new Intent(MainActivity.this, Floating_window.class);
+                startService(startservice);
             }
         });
         gift_btn.setOnClickListener(new View.OnClickListener() {
@@ -86,7 +94,6 @@ public class MainActivity extends AppCompatActivity implements Retrive_info.Call
 
         //Service Setting-------------------------------------------------------------Background thread
         Intent startservice = new Intent(this, Retrive_info.class);
-        //startService(startservice);
         bindService(startservice, mService, Context.BIND_AUTO_CREATE);
         Log.d(TAG,"Service  Start");
 
@@ -116,7 +123,19 @@ public class MainActivity extends AppCompatActivity implements Retrive_info.Call
             Retrive_service = null;
         }
     };
+    public ServiceConnection fService = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Floating_window.localBinder binder = (Floating_window.localBinder) service;
+            Floating_service = binder.getBinder();
+//            Floating_service.create_floating();
+        }
 
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
     //Callback function implement for Service
     public void updateServiceRetriveMsg(String _url){
 //        Log.w(TAG, _url);
@@ -152,10 +171,17 @@ public class MainActivity extends AppCompatActivity implements Retrive_info.Call
 
         win_manage = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
 
-        ImageView win_view = (ImageView)inflater.inflate(R.layout.floating_layout, null, false);
+        View win_view = inflater.inflate(R.layout.floating_layout, null, false);
+        ImageView img = (ImageView) win_view.findViewById(R.id.floating_view);
+        img.setImageResource(R.drawable.ic_ballon);
 
         //Setting window parameter
         WindowManager.LayoutParams wmParams = new WindowManager.LayoutParams();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            wmParams.type = WindowManager.LayoutParams.TYPE_TOAST;
+        } else {
+            wmParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
+        }
         wmParams.format = PixelFormat.TRANSLUCENT;
         wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE |
