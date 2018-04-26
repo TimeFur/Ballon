@@ -86,8 +86,9 @@ public class MainActivity extends AppCompatActivity implements Retrive_info.Call
         gift_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                intent.setClass(MainActivity.this, Collection.class);
-                startActivity(intent);
+//                intent.setClass(MainActivity.this, Collection.class);
+//                startActivity(intent);
+                startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse("https://www.youtube.com/watch?v=0TLhN3fPjk0")));
             }
         });
         Log.d(TAG,"Middle  Start");

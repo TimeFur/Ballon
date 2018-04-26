@@ -70,7 +70,7 @@ public class Floating_window extends Service{
             float touch_x = 0;
             float touch_y = 0;
             int change_flag = 0;
-            
+
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction())
@@ -103,15 +103,20 @@ public class Floating_window extends Service{
                                     img.setTag(R.drawable.play);
                                     break;
                                 case R.drawable.play:
+                                    img.setImageResource(R.drawable.list_tag);
+                                    img.setTag(R.drawable.list_tag);
+                                    win_param.width = 20;
+                                    break;
+                                case R.drawable.list_tag:
                                     img.setImageResource(R.drawable.home);
                                     img.setTag(R.drawable.home);
+                                    win_param.width = 100;
                                     break;
                             }
                             win_manage.updateViewLayout(win_view, win_param);
                         }
                         break;
                 }
-
                 return true;
             }
         });
