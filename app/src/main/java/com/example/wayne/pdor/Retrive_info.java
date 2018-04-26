@@ -106,7 +106,7 @@ public class Retrive_info extends Service {
 
         @Override
         public void run() {
-            Log.i(TAG, "Post");
+//            Log.i(TAG, "Post");
             handle.postDelayed(this, 1000);
         }
     };

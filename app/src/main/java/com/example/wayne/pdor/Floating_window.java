@@ -42,7 +42,8 @@ public class Floating_window extends Service{
         //Setting the WindowManager  ------Step2.1
         win_view = layoutInflater.inflate(R.layout.floating_layout, null);
         ImageView img = win_view.findViewById(R.id.floating_view);
-        img.setImageResource(R.drawable.ic_ballon);
+        img.setImageResource(R.drawable.play);
+        img.setTag(R.drawable.play);
 
         //Setting the Layout parameter -----Step2.2
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) // >= API26
@@ -57,35 +58,57 @@ public class Floating_window extends Service{
         win_param.gravity = Gravity.LEFT | Gravity.TOP;
         win_param.width = 100;
         win_param.height = 100;
-
+        win_param.x = 100;
+        win_param.y = 100;
         //Bind Setting from winView & winParam -----Step3
         win_manage.addView(win_view, win_param);
 
         win_view.setOnTouchListener(new View.OnTouchListener() {
+
+            int setParam_x = 0;
+            int setParam_y = 0;
+            float touch_x = 0;
+            float touch_y = 0;
+            int change_flag = 0;
+            
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                int location_x = 0;
-                int location_y = 0;
-                float touch_x = 0;
-                float touch_y = 0;
                 switch (event.getAction())
                 {
                     case MotionEvent.ACTION_DOWN:
                         Log.v(TAG, "View touch down!!!!");
-                        location_x = win_param.x;
-                        location_y = win_param.y;
-                        touch_x = event.getRawX();
-                        touch_y = event.getRawY();
+                        change_flag = 1;
+                        setParam_x = win_param.x; //The img left-up location
+                        setParam_y = win_param.y;
+                        touch_x = event.getRawX() ; //The click location
+                        touch_y = event.getRawY() ;
+
                         break;
                     case MotionEvent.ACTION_MOVE:
                         Log.v(TAG, "View touch moving!!!!");
-                        win_param.x = location_x + (int)( event.getRawX() - touch_x);
-                        win_param.y = location_y + (int)( event.getRawY() - touch_y);
+                        change_flag = 0;
+                        win_param.x =  setParam_x + (int)( event.getRawX() - touch_x);
+                        win_param.y =  setParam_y + (int)( event.getRawY() - touch_y);
                         win_manage.updateViewLayout(win_view, win_param);
                         break;
                     case MotionEvent.ACTION_UP:
                         Log.v(TAG, "View touch up!!!!");
-
+                        if (change_flag == 1)
+                        {
+                            ImageView img = win_view.findViewById(R.id.floating_view);
+                            switch ((Integer)img.getTag())
+                            {
+                                case R.drawable.home:
+                                    img.setImageResource(R.drawable.play);
+                                    img.setTag(R.drawable.play);
+                                    break;
+                                case R.drawable.play:
+                                    img.setImageResource(R.drawable.home);
+                                    img.setTag(R.drawable.home);
+                                    break;
+                            }
+                            win_manage.updateViewLayout(win_view, win_param);
+                        }
                         break;
                 }
 
