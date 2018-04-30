@@ -71,14 +71,6 @@ public class MainActivity extends AppCompatActivity implements Retrive_info.Call
         ballon_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                intent.setClass(MainActivity.this, Ballon.class);
-//                startActivity(intent);
-
-//                intent.setClass(MainActivity.this, Floating_window.class);
-//                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-//                intent.setData(Uri.parse("package:" + getPackageName()));
-//                startActivityForResult(intent, 1);
-
                 Intent startservice = new Intent(MainActivity.this, Floating_window.class);
                 startService(startservice);
             }
@@ -86,9 +78,8 @@ public class MainActivity extends AppCompatActivity implements Retrive_info.Call
         gift_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                intent.setClass(MainActivity.this, Collection.class);
-//                startActivity(intent);
-                startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse("https://www.youtube.com/watch?v=0TLhN3fPjk0")));
+                intent.setClass(MainActivity.this, Collection.class);
+                startActivity(intent);
             }
         });
         Log.d(TAG,"Middle  Start");
