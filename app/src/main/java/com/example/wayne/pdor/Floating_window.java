@@ -25,12 +25,13 @@ public class Floating_window extends Service{
 
     String TAG = "Floating_window";
 
-    private Collection  collection_music;
-
+    private Collection.Stream_audio  collection_music;
+    private boolean initial_status = false;
+    private String url = "https://www.ssaurel.com/tmp/mymusic.mp3";
     public void onCreate(){
         super.onCreate();
 
-        collection_music = new Collection();
+        collection_music = new Collection.Stream_audio();
         create_floating();
     }
 
@@ -110,6 +111,7 @@ public class Floating_window extends Service{
                                     img.setImageResource(R.drawable.list_tag);
                                     img.setTag(R.drawable.list_tag);
                                     win_param.width = 20;
+                                    play_music();
                                     break;
                                 case R.drawable.list_tag:
                                     img.setImageResource(R.drawable.home);
@@ -138,6 +140,21 @@ public class Floating_window extends Service{
     }
 
     void play_music(){
-
+        if (collection_music.stream_player.isPlaying() == false)
+        {
+            if (initial_status == false)
+            {
+                collection_music.execute(url);
+                initial_status = true;
+            }
+            else
+            {
+                collection_music.stream_player.start();
+            }
+        }
+        else
+        {
+            collection_music.stream_player.pause();
+        }
     }
 }

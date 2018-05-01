@@ -1,7 +1,9 @@
 package com.example.wayne.pdor;
 
+import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -59,7 +61,7 @@ public class Collection extends AppCompatActivity {
     /*========================================
                    Stream data class
      ========================================*/
-    class Stream_audio extends AsyncTask<String, Integer, Long>
+    public static class Stream_audio extends AsyncTask<String, Integer, Long>
     {
 
         public MediaPlayer stream_player;
@@ -84,7 +86,6 @@ public class Collection extends AppCompatActivity {
                 });
 
                 stream_player.prepare(); //player for playback (synchronously)
-
             }catch (Exception e){
 
             }
