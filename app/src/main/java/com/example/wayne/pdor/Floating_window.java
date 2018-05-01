@@ -46,8 +46,8 @@ public class Floating_window extends Service{
         //Setting the WindowManager  ------Step2.1
         win_view = layoutInflater.inflate(R.layout.floating_layout, null);
         ImageView img = win_view.findViewById(R.id.floating_view);
-        img.setImageResource(R.drawable.play);
-        img.setTag(R.drawable.play);
+        img.setImageResource(R.drawable.pdor_stop);
+        img.setTag(R.drawable.pdor_stop);
 
         //Setting the Layout parameter -----Step2.2
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) // >= API26
@@ -60,8 +60,8 @@ public class Floating_window extends Service{
         win_param.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
         win_param.gravity = Gravity.LEFT | Gravity.TOP;
-        win_param.width = 100;
-        win_param.height = 100;
+        win_param.width = 50;
+        win_param.height = 50;
         win_param.x = 100;
         win_param.y = 100;
         //Bind Setting from winView & winParam -----Step3
@@ -100,25 +100,18 @@ public class Floating_window extends Service{
                         if (change_flag == 1)
                         {
                             ImageView img = win_view.findViewById(R.id.floating_view);
-                            switch ((Integer)img.getTag())
+
+                            if (collection_music.stream_player.isPlaying() == true)
                             {
-                                case R.drawable.home:
-                                    img.setImageResource(R.drawable.play);
-                                    img.setTag(R.drawable.play);
-                                    play_music();
-                                    break;
-                                case R.drawable.play:
-                                    img.setImageResource(R.drawable.list_tag);
-                                    img.setTag(R.drawable.list_tag);
-                                    win_param.width = 20;
-                                    play_music();
-                                    break;
-                                case R.drawable.list_tag:
-                                    img.setImageResource(R.drawable.home);
-                                    img.setTag(R.drawable.home);
-                                    win_param.width = 100;
-                                    break;
+                                img.setImageResource(R.drawable.pdor_stop);
+                                play_music();
                             }
+                            else
+                            {
+                                img.setImageResource(R.drawable.pdor_play);
+                                play_music();
+                            }
+
                             win_manage.updateViewLayout(win_view, win_param);
                         }
                         break;

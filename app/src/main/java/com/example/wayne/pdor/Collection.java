@@ -1,10 +1,12 @@
 package com.example.wayne.pdor;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.RecoverySystem;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -63,7 +65,6 @@ public class Collection extends AppCompatActivity {
      ========================================*/
     public static class Stream_audio extends AsyncTask<String, Integer, Long>
     {
-
         public MediaPlayer stream_player;
 
         //Constructor
@@ -97,6 +98,11 @@ public class Collection extends AppCompatActivity {
         protected void onPostExecute(Long aLong) {
             super.onPostExecute(aLong);
             stream_player.start();
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
         }
     }
 }
