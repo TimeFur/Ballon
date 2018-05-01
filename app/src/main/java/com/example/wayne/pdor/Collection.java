@@ -18,6 +18,7 @@ public class Collection extends AppCompatActivity {
     private boolean play_status = false;
     private boolean initial_status = true;
     private String url = "https://www.ssaurel.com/tmp/mymusic.mp3";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,29 +27,30 @@ public class Collection extends AppCompatActivity {
         //setting the media
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        final Stream_audio stream = new Stream_audio();
 
         play_btn = findViewById(R.id.collectio_play_btn);
 
         play_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mediaPlayer.isPlaying() == false)
+                if (stream.stream_player.isPlaying() == false)
                 {
                     //Start to play
                     if (initial_status == true) {
-                        new Stream_audio().execute(url);
+                        stream.execute(url);
                         initial_status = false;
                     }
                     else
                     {
-                        if (mediaPlayer.isPlaying() == false)
-                            mediaPlayer.start();
+                        if (stream.stream_player.isPlaying() == false)
+                            stream.stream_player.start();
                     }
                 }
                 else
                 {
                     //Stop
-                    mediaPlayer.pause();
+                    stream.stream_player.pause();
                 }
             }
         });
@@ -59,26 +61,33 @@ public class Collection extends AppCompatActivity {
      ========================================*/
     class Stream_audio extends AsyncTask<String, Integer, Long>
     {
+
+        public MediaPlayer stream_player;
+
+        //Constructor
+        public Stream_audio() {
+            stream_player = new MediaPlayer();
+            stream_player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        }
+
         @Override
         protected Long doInBackground(String... urls) {
             try
             {
-                mediaPlayer.setDataSource(urls[0]);
-                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                stream_player.setDataSource(urls[0]);
+                stream_player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
-                        mediaPlayer.stop();
-                        mediaPlayer.reset(); //it should set the resource again & call prepare
-                        initial_status = true;
+                        stream_player.stop();
+                        stream_player.reset(); //it should set the resource again & call prepare
                     }
                 });
 
-                mediaPlayer.prepare(); //player for playback (synchronously)
+                stream_player.prepare(); //player for playback (synchronously)
 
             }catch (Exception e){
 
             }
-
 
             return null;
         }
@@ -86,9 +95,7 @@ public class Collection extends AppCompatActivity {
         @Override
         protected void onPostExecute(Long aLong) {
             super.onPostExecute(aLong);
-
-            mediaPlayer.start();
-
+            stream_player.start();
         }
     }
 }

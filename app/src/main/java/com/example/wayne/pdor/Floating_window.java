@@ -25,9 +25,12 @@ public class Floating_window extends Service{
 
     String TAG = "Floating_window";
 
+    private Collection  collection_music;
+
     public void onCreate(){
         super.onCreate();
 
+        collection_music = new Collection();
         create_floating();
     }
 
@@ -101,6 +104,7 @@ public class Floating_window extends Service{
                                 case R.drawable.home:
                                     img.setImageResource(R.drawable.play);
                                     img.setTag(R.drawable.play);
+                                    play_music();
                                     break;
                                 case R.drawable.play:
                                     img.setImageResource(R.drawable.list_tag);
@@ -133,4 +137,7 @@ public class Floating_window extends Service{
         }
     }
 
+    void play_music(){
+
+    }
 }
